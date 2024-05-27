@@ -6,7 +6,7 @@ namespace Contato.Data
     public class ContactDBContext : DbContext
     {
         public ContactDBContext(DbContextOptions options) : base(options) { }
-        public DbSet<Contact> Contatos { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
 
     }
 }
