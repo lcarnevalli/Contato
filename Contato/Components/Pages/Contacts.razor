@@ -16,7 +16,13 @@
     <div class="row justify-content-between">
         <div class="col-md-4">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Filtrar por DDD..." @bind="filtroDDD">
+                <select class="form-control" @bind="filtroRegiao">
+                    <option value="">Selecione uma região...</option>
+                    @foreach (var regiao in regioes.Keys)
+                    {
+                        <option value="@regiao">@regiao</option>
+                    }
+                </select>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button" @onclick="AplicarFiltro">Filtrar</button>
                     <button class="btn btn-outline-danger" type="button" @onclick="LimparFiltro">Limpar Filtro</button>
@@ -76,6 +82,17 @@ else
     private Contact currentContact = new Contact();
     private bool isEditMode;
     private string filtroDDD;
+    private string filtroRegiao;
+
+    private Dictionary<string, List<string>> regioes = new Dictionary<string, List<string>>
+    {
+     
+        { "Norte", new List<string> { "91", "92", "93", "94", "95", "96", "97", "98", "99" } },
+        { "Nordeste", new List<string> { "71", "73", "74", "75", "77", "79", "81", "82", "83", "84", "85", "86", "87", "88", "89" } },
+        { "Centro-Oeste", new List<string> { "61", "62", "64", "65", "66", "67" } },
+        { "Sudeste", new List<string> { "11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "22", "24", "27", "28", "31", "32", "33", "34", "35", "37", "38" } },
+        { "Sul", new List<string> { "41", "42", "43", "44", "45", "46", "47", "48", "49", "51", "53", "54", "55" } }
+   };
 
     protected override async Task OnInitializedAsync()
     {
@@ -84,20 +101,22 @@ else
 
     private async Task AplicarFiltro()
     {
-        if (string.IsNullOrWhiteSpace(filtroDDD))
+        if (string.IsNullOrWhiteSpace(filtroRegiao))
         {
             contatos = await db.Contacts.ToListAsync();
         }
         else
         {
+            var ddds = regioes[filtroRegiao];
             contatos = await db.Contacts
-                              .Where(c => c.DDD == filtroDDD)
+                              .Where(c => ddds.Contains(c.DDD))
                               .ToListAsync();
         }
     }
     private async Task LimparFiltro()
     {
         filtroDDD = "";
+        filtroRegiao = "";
         contatos = await db.Contacts.ToListAsync();
     }
     private async Task SaveContact()
