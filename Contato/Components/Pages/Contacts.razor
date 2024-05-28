@@ -12,9 +12,24 @@
 <h1>Gerenciamento de Contatos</h1>
 
 
-<div>
-    <button class="btn btn-primary" @onclick="() => OpenAddEditModal()">Adicionar Novo Contato</button>
+<div class="container mt-3">
+    <div class="row justify-content-between">
+        <div class="col-md-4">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Filtrar por DDD..." @bind="filtroDDD">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" @onclick="AplicarFiltro">Filtrar</button>
+                    <button class="btn btn-outline-danger" type="button" @onclick="LimparFiltro">Limpar Filtro</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-auto">
+            <button class="btn btn-primary mb-2" @onclick="() => OpenAddEditModal()">Adicionar Novo Contato</button>
+        </div>
+    </div>
 </div>
+
+
 
  @if (contatos == null)
 {
@@ -60,13 +75,31 @@ else
     private List<Contact> contatos;
     private Contact currentContact = new Contact();
     private bool isEditMode;
+    private string filtroDDD;
 
     protected override async Task OnInitializedAsync()
     {
         contatos = await db.Contacts.ToListAsync();
     }
 
-
+    private async Task AplicarFiltro()
+    {
+        if (string.IsNullOrWhiteSpace(filtroDDD))
+        {
+            contatos = await db.Contacts.ToListAsync();
+        }
+        else
+        {
+            contatos = await db.Contacts
+                              .Where(c => c.DDD == filtroDDD)
+                              .ToListAsync();
+        }
+    }
+    private async Task LimparFiltro()
+    {
+        filtroDDD = "";
+        contatos = await db.Contacts.ToListAsync();
+    }
     private async Task SaveContact()
     {
         if (isEditMode)

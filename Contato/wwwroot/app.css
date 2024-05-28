@@ -49,3 +49,10 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+.input-group .btn {
+    margin-left: 2px; /* Adiciona um pequeno espaço entre os botões */
+}
+
+.container {
+    padding-top: 20px; /* Espaço no topo */
+}
